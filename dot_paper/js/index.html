@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dot Paper Generator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container label, .container input, .container button {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <label for="dpi">DPI:</label>
+        <input type="number" id="dpi" value="300">
+        <label for="spacing">Spacing (inches):</label>
+        <input type="number" id="spacing" value="0.125" step="0.01">
+        <label for="radius">Dot Radius (inches):</label>
+        <input type="number" id="radius" value="0.01" step="0.001">
+        <label for="opacity">Dot Opacity (0 to 1):</label>
+        <input type="number" id="opacity" value="0.2" step="0.01" min="0" max="1">
+        <label for="pageWidth">Page Width (inches):</label>
+        <input type="number" id="pageWidth" value="8.5" step="0.1">
+        <label for="pageHeight">Page Height (inches):</label>
+        <input type="number" id="pageHeight" value="11" step="0.1">
+        <button id="generate">Generate</button>
+    </div>
+    <script>
+        document.getElementById('generate').addEventListener('click', () => {
+            const { jsPDF } = window.jspdf;
+            const pageWidth = parseFloat(document.getElementById('pageWidth').value);
+            const pageHeight = parseFloat(document.getElementById('pageHeight').value);
+            const doc = new jsPDF({
+                unit: 'in',
+                format: [pageWidth, pageHeight]
+            });
+
+            const dpi = parseFloat(document.getElementById('dpi').value);
+            const spacing = parseFloat(document.getElementById('spacing').value);
+            const radius = parseFloat(document.getElementById('radius').value);
+            const opacity = parseFloat(document.getElementById('opacity').value);
+
+            doc.setFillColor(0, 0, 0, opacity);
+
+            for (let y = spacing; y < pageHeight; y += spacing) {
+                for (let x = spacing; x < pageWidth; x += spacing) {
+                    doc.circle(x, y, radius, 'F');
+                }
+            }
+
+            doc.save('dot_paper.pdf');
+        });
+    </script>
+</body>
+</html>
